@@ -71,7 +71,7 @@ unintended consequences. If you use this approach in another library
 or framework, be very clear about it with your users.
 
 ```ruby
-require "better_ipaddr"
+require "better_ipaddr/core_extension"
 addr = IPAddr["1.0.0.1"]
 class_c = addr << 8 # => IPAddr::V4["1.0.0.0/24"]
 IPAddr.new("1.0.0.0/24").summarize_with(IPAddr["1.0.1.0/24"]) # => IPAddr::V4["1.0.0.0/23"]
@@ -81,7 +81,7 @@ The recommended way is to `require "better_ipaddr"` and use
 the `IPAddr` subclasses explicitly.
 
 ```ruby
-require "better_ipaddr/classes"
+require "better_ipaddr"
 addr = IPAddr::V4["1.0.0.1"]
 class_c = addr << 8 # => IPAddr::V4["1.0.0.0/24"]
 ```
