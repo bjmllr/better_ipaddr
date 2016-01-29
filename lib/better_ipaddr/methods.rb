@@ -43,7 +43,7 @@ module BetterIpaddr
     NETMASK_TO_PREFIX_LENGTH = {}
     PREFIX_LENGTH_TO_NETMASK.each_pair do |family, hash|
       NETMASK_TO_PREFIX_LENGTH[family] =
-        hash.map.with_index { |e, i| [e, i] }.to_h
+        Hash[hash.map.with_index { |e, i| [e, i] }]
     end
   end
 
