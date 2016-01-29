@@ -12,8 +12,15 @@ class IPAddr
     end
 
     def self.[](address, mask = nil, family: self::FAMILY)
-      if mask
-        new(address, family).mask(new(mask, family).to_s)
+      case mask
+      when Integer
+        if 0 <= mask && mask <= FAMILY_TO_BIT_LENGTH[family]
+          new(address, family).mask(mask)
+        else
+          new(address, family).mask(new(mask, family).to_s)
+        end
+      when String, IPAddr
+        new(address, family).mask(mask.to_s)
       else
         new(address, family)
       end

@@ -12,6 +12,23 @@ describe BetterIpaddr do
     assert_equal IPAddr::Base.specialize(addr).class, IPAddr::V4
   end
 
+  it "allows instantiation of IPAddrs using various formats" do
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0", IPAddr::V4["255.255.255.0"].to_i]
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0", IPAddr::V4["255.255.255.0"]]
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0", "255.255.255.0"]
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0", "24"]
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0", 24]
+  end
+
   it "round trips ipv4 with strings" do
     addr = "1.0.0.0/24"
     assert_equal addr, IPAddr::V4[addr].cidr
