@@ -1,5 +1,8 @@
 # BetterIpaddr
 
+[![Gem Version](https://badge.fury.io/rb/sidekiq.svg)](https://rubygems.org/gems/better_ipaddr)
+[![Build Status](https://travis-ci.org/mperham/sidekiq.svg)](https://travis-ci.org/bjmllr/better_ipaddr)
+
 The `IPAddr` class that network engineers always wanted.
 
 ```ruby
