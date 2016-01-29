@@ -99,7 +99,7 @@ space = BetterIpaddr::Space.new([IPAddr::V4["10.0.0.0/24"],
 space.gaps # => BetterIpaddr::Space.new([IPAddr::V4["10.0.1.0/24"]])
 ```
 
-The available methods are described in the API docs.
+The available methods are described in the [API docs](http://www.rubydoc.info/gems/better_ipaddr).
 
 ## Development
 
