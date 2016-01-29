@@ -13,7 +13,7 @@ addr = IPAddr::V4[some_source] # shortcut for .new, because your test suite
 addr.host?                     # is it a host address?
 addr.network?                  # or a network address?
 addr.cidr                      # what is the CIDR representation?
-addr << 1                      # what is the next larger enclosing network?
+addr.grow(1)                   # what is the next larger enclosing network?
 addr + 1                       # what address comes after this one?
 addr.size                      # how many host addresses fit in this network?
 addr.mask_addr                 # what's the netmask (as an integer)?
