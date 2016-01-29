@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "IPAddr enhancements for network management."
   spec.homepage      = "https://github.com/bjmllr/better_ipaddr"
-  spec.license       = "GPL"
+  spec.license       = "GPL-3.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
                        .reject { |f| f.match(%r{^(test|spec|features)/}) }
