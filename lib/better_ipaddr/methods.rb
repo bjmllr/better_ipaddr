@@ -105,7 +105,8 @@ module BetterIpaddr
     end
 
     # Return the address greater than the original address by the
-    # given offset.
+    # given offset. Note that the result will always be a host
+    # address.
     # @param offset [Integer] the difference between the original
     #   address and the returned address
     # @return [IPAddr]
@@ -115,7 +116,8 @@ module BetterIpaddr
     end
 
     # Return the address less than the original address by the given
-    # offset.
+    # offset. Note that the result will always be a host
+    # address.
     # @param offset [Integer] the difference between the original
     #   address and the returned address
     # @return [IPAddr]
