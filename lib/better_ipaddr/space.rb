@@ -45,6 +45,7 @@ module BetterIpaddr
     end
 
     def gaps
+      return export([space]) if space && networks.empty?
       gap_networks = if space
                        gaps_before + gaps_between + gaps_after
                      else

@@ -39,5 +39,12 @@ module BetterIpaddr
       assert_equal space.gaps.find_by_minimum_prefix_length(19).cidr,
                    "1.0.32.0/19"
     end
+
+    it "returns original space as the only gap when the space is empty" do
+      networks = []
+      unused_space = [IPAddr::V4["1.0.0.0/8"]]
+      space = BetterIpaddr::Space.new(networks, space: unused_space.first)
+      assert_equal space.gaps, BetterIpaddr::Space.new(unused_space)
+    end
   end
 end
