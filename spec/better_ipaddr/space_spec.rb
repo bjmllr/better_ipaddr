@@ -46,5 +46,12 @@ module BetterIpaddr
       space = BetterIpaddr::Space.new(networks, space: unused_space.first)
       assert_equal space.gaps, BetterIpaddr::Space.new(unused_space)
     end
+
+    it "finds gaps in a space with a network at the beginning" do
+      networks = [IPAddr::V4["250.0.0.0/22"]]
+      supernet = IPAddr::V4["250.0.0.0/20"]
+      space = BetterIpaddr::Space.new(networks, space: supernet)
+      refute_empty space.gaps.to_a
+    end
   end
 end

@@ -104,11 +104,11 @@ module BetterIpaddr
     end
 
     def gaps_after
-      export([space.last.last, space.last + 1]).gaps
+      export([networks.last.last, space.last + 1]).gaps
     end
 
     def gaps_before
-      export([space.first - 1, networks.first]).gaps
+      export([space.first - 1, networks.first.first]).gaps
     end
 
     def gaps_between
