@@ -97,7 +97,12 @@ module BetterIpaddr
     # Return the integer representation of the netmask.
     # @return [Integer]
     attr_reader :mask_addr
-    alias_method :netmask, :mask_addr
+
+    # Return the string representation of the netmask.
+    # @return [String]
+    def netmask
+      self.class[mask_addr].to_s
+    end
 
     # Return the address greater than the original address by the
     # given offset.

@@ -78,6 +78,12 @@ describe BetterIpaddr do
     assert_equal IPAddr::V4["1.0.0.255"], IPAddr::V4["1.0.0.0/24"].broadcast
   end
 
+  it "provides ipv4 netmasks in integer or string form" do
+    net = IPAddr::V4["1.0.0.0/24"]
+    assert_equal net.mask_addr, IPAddr::V4["255.255.255.0"].to_i
+    assert_equal net.netmask, "255.255.255.0"
+  end
+
   it "calculates ipv4 wildcard mask strings" do
     assert_equal IPAddr::V4["1.0.0.0/24"].wildcard, "0.0.0.255"
   end
