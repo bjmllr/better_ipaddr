@@ -12,6 +12,11 @@ describe BetterIpaddr do
     assert_equal IPAddr::Base.specialize(addr).class, IPAddr::V4
   end
 
+  it "allows instantiation of specialist IPAddr objects from a string" do
+    assert_equal IPAddr::V4, IPAddr::Base.parse("1.0.0.1").class
+    assert_equal IPAddr::V6, IPAddr::Base.parse("::1").class
+  end
+
   it "allows instantiation of IPAddrs using various formats" do
     assert_equal IPAddr::V4["1.0.0.0/24"],
                  IPAddr::V4["1.0.0.0", IPAddr::V4["255.255.255.0"].to_i]

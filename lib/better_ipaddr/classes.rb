@@ -26,6 +26,14 @@ class IPAddr
       end
     end
 
+    # Convert the given string to an IPAddr subclass.
+    #
+    # @param address [String] the string to convert
+    # @return [IPAddr::V4, IPAddr::V6, IPAddr::EUI48]
+    def self.parse(address)
+      specialize IPAddr.new(address)
+    end
+
     # Return the given address as an instance of a class specific to
     # its address family.
     #
