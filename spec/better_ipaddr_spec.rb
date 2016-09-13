@@ -32,6 +32,9 @@ describe BetterIpaddr do
 
     assert_equal IPAddr::V4["1.0.0.0/24"],
                  IPAddr::V4["1.0.0.0", 24]
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4[IPAddr.new("1.0.0.0/24")]
   end
 
   it "allows instantiation of IPAddrs using existing IPAddrs" do

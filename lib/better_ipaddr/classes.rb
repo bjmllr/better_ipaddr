@@ -50,6 +50,7 @@ class IPAddr
     # @param family [Integer, Nil]
     # @return [IPAddr]
     def self.from_ipaddr(address, prefix_length, family: self::FAMILY)
+      address = specialize(address)
       new(address.to_i, family).mask(prefix_length || address.prefix_length)
     end
 
