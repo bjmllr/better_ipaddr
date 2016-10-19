@@ -139,6 +139,24 @@ describe BetterIpaddr do
     refute(IPAddr::V4["1.0.0.0/32"] == IPAddr::V4["1.0.0.0/31"])
   end
 
+  # https://bugs.ruby-lang.org/issues/12799
+  it "can be tested for inequality against other types" do
+    addr = IPAddr::V4["1.1.1.1"]
+    refute addr == []
+    refute addr == {}
+    refute addr == "1.1.1.1"
+    refute addr == "1.1.1.1/32"
+    refute addr == :"1.1.1.1"
+
+    addr = IPAddr.new("1.1.1.1")
+    addr.extend(BetterIpaddr::InstanceMethods)
+    refute addr == []
+    refute addr == {}
+    refute addr == "1.1.1.1"
+    refute addr == "1.1.1.1/32"
+    refute addr == :"1.1.1.1"
+  end
+
   it "orders ipv4 networks based on address and prefix length" do
     assert(IPAddr::V4["1.0.0.1"] < IPAddr::V4["1.0.0.2/31"])
     assert(IPAddr::V4["1.0.0.1/31"] < IPAddr::V4["1.0.0.1"])

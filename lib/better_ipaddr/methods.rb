@@ -157,12 +157,14 @@ module BetterIpaddr
 
     # Test the equality of two IP addresses, or an IP address an
     # integer representing an address in the same address family.
+    #
+    # Returns false for any other type.
+    #
     # @param other [IPAddr, Integer] the address to compare with
     # @return [Boolean]
 
     def ==(other)
-      return false if other.nil?
-      (self <=> other) == 0
+      (other.is_a?(IPAddr) || other.is_a?(Integer)) && (self <=> other) == 0
     end
 
     # The address at the given offset relative to the network address
