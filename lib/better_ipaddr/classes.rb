@@ -8,10 +8,6 @@ class IPAddr
     include Comparable
     include Enumerable
 
-    def inherited(cls)
-      cls.extend BetterIpaddr::ClassMethods
-    end
-
     # Create an IPAddr from the given object.
     #
     # Returns nil if the object is of a type that can't be converted to an
