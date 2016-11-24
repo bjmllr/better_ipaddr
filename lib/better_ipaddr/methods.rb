@@ -12,6 +12,61 @@ module BetterIpaddr
       EUI64 = 64
     end
 
+    module Regex
+      OCTET = Regexp.union(
+        /25[0-5]/,
+        /2[0-4][0-9]/,
+        /1[0-9][0-9]/,
+        /[1-9][0-9]/,
+        /[0-9]/
+      )
+
+      TRAILING_OCTET = /\.#{OCTET}/
+
+      IPV4_PL = Regexp.union(
+        /3[0-2]/,
+        /[1-2][0-9]/,
+        /[0-9]/
+      )
+
+      IPV4 = /\A#{OCTET}#{TRAILING_OCTET}{3}(?:\/#{IPV4_PL})?\z/
+
+      # IPv6 regex adapted from http://stackoverflow.com/a/17871737
+      QUAD = /[0-9a-zA-Z]{1,4}/
+      LEADING_QUAD = /[0-9a-zA-Z]{1,4}:/
+      TRAILING_QUAD = /:[0-9a-zA-Z]{1,4}/
+
+      IPV6_PL = Regexp.union(
+        /[0-9]/,
+        /[1-9][0-9]/,
+        /1[0-1][0-9]/,
+        /12[0-8]/
+      )
+
+      IPV6_ADDRESS = Regexp.union(
+        # full
+        /#{LEADING_QUAD}{7,7}#{QUAD}/,
+
+        # zero-compressed
+        /#{LEADING_QUAD}{1,7}:/,
+        /:#{TRAILING_QUAD}{1,7}/,
+        /#{LEADING_QUAD}{1,6}#{TRAILING_QUAD}{1,1}/,
+        /#{LEADING_QUAD}{1,5}#{TRAILING_QUAD}{1,2}/,
+        /#{LEADING_QUAD}{1,4}#{TRAILING_QUAD}{1,3}/,
+        /#{LEADING_QUAD}{1,3}#{TRAILING_QUAD}{1,4}/,
+        /#{LEADING_QUAD}{1,2}#{TRAILING_QUAD}{1,5}/,
+        /#{LEADING_QUAD}{1,1}#{TRAILING_QUAD}{1,6}}/,
+
+        # IPv4-mapped / -translated
+        /::(ffff(:0{1,4}){0,1}:){0,1}#{IPV4}/,
+
+        # IPv4 embedded
+        /#{LEADING_QUAD}{1,4}:#{IPV4}/
+      )
+
+      IPV6 = /\A#{IPV6_ADDRESS}(?:\/#{IPV6_PL})?\z/
+    end
+
     # Map well known address family names to constants.
     SYMBOL_TO_FAMILY = {
       ipv4: Family::IPV4,

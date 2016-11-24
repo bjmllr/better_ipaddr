@@ -33,6 +33,29 @@ class IPAddr
       end
     end
 
+    # Create an IPAddr from the given object, guessing the type of address given
+    # based on its type and content.
+    #
+    # Note that an Integer that corresponds to an IPv4 address will be converted
+    # to an IPAddr::V4, even though all such Integers also correspond to valid
+    # IPv6 addresses.
+    #
+    # Returns nil if the object can't be converted based on its type and
+    # content.
+    #
+    # @param address [Integer, IPAddr, String]
+    # @return [IPAddr, Nil]
+    def self.from(address)
+      case address
+      when IPAddr
+        specialize address
+      when Regex::IPV4, 0..V4::MAX_INT
+        V4[address]
+      when Regex::IPV6, 0..V6::MAX_INT
+        V6[address]
+      end
+    end
+
     # Create an IPAddr from an Integer.
     #
     # @param address [Integer]
@@ -172,6 +195,7 @@ class IPAddr
                 NETMASK_TO_PREFIX_LENGTH.fetch(self::FAMILY))
       const_set(:PREFIX_LENGTH_TO_NETMASK,
                 PREFIX_LENGTH_TO_NETMASK.fetch(self::FAMILY))
+      const_set(:MAX_INT, 2**self::BIT_LENGTH - 1)
     end
 
     def address_family_bit_length
@@ -189,10 +213,14 @@ class IPAddr
 
   class V4 < Base
     specialize_constants Family::IPV4
+
+    REGEX = Regex::IPV4
   end
 
   class V6 < Base
     specialize_constants Family::IPV6
+
+    REGEX = Regex::IPV6
   end
 
   class MAC < Base
