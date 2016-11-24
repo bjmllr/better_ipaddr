@@ -1,3 +1,4 @@
+require "better_ipaddr/constants"
 require "better_ipaddr/methods"
 
 class IPAddr
