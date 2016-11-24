@@ -1,5 +1,6 @@
 require "spec_helper"
 require "better_ipaddr"
+require "better_ipaddr/kernel_method"
 
 describe BetterIpaddr do
   it "has a version number" do
@@ -43,20 +44,16 @@ describe BetterIpaddr do
   end
 
   it "can convert various types of objects to IPAddr" do
-    assert_equal IPAddr::V4["1.0.0.0"],
-                 IPAddr::Base.from("1.0.0.0")
-    assert_equal IPAddr::V4["0.0.0.1"],
-                 IPAddr::Base.from(1)
+    assert_equal IPAddr::V4["1.0.0.0"], IPAddr("1.0.0.0")
+    assert_equal IPAddr::V4["0.0.0.1"], IPAddr(1)
 
-    assert_equal IPAddr::V6["::1"],
-                 IPAddr::Base.from("::1")
-    assert_equal IPAddr::V6["::1000:0:0"],
-                 IPAddr::Base.from(0x1000_0000_0000)
+    assert_equal IPAddr::V6["::1"], IPAddr("::1")
+    assert_equal IPAddr::V6["::1000:0:0"], IPAddr(0x1000_0000_0000)
 
-    assert_nil IPAddr::Base.from(nil)
-    assert_nil IPAddr::Base.from("1.0.0")
-    assert_nil IPAddr::Base.from("1.0.0.256")
-    assert_nil IPAddr::Base.from(-1)
+    assert_nil IPAddr(nil)
+    assert_nil IPAddr("1.0.0")
+    assert_nil IPAddr("1.0.0.256")
+    assert_nil IPAddr(-1)
   end
 
   it "round trips ipv4 with strings" do

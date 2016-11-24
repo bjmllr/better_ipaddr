@@ -90,6 +90,8 @@ Another way is to `require "better_ipaddr/methods"` and mix
 `BetterIpaddr::InstanceMethods` into your own class which implements
 the rest of the `IPAddr` API, or into individual `IPAddr` objects.
 
+The `Kernel#IPAddr` conversion method (in the spirit of `Kernel#Array`, `Kernel#Integer`, etc), is added to `Kernel` via `require "better_ipaddr/kernel_method"`. It delegates to `IPAddr::Base.from`.
+
 `BetterIpaddr::Space`, a collection class for dealing with sets of network addresses, is also available but not loaded by default.
 
 ```ruby
