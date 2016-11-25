@@ -130,6 +130,7 @@ module BetterIpaddr
     # @return [IPAddr] the address at the given index
 
     def [](offset)
+      return self if offset.zero? && host?
       offset2 = offset >= 0 ? offset : size + offset
       self.class[to_i + offset2, family: family]
     end
