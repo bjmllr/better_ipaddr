@@ -47,6 +47,7 @@ module BetterIpaddr
         /#{LEADING_QUAD}{7,7}#{QUAD}/,
 
         # zero-compressed
+        /::/,
         /#{LEADING_QUAD}{1,7}:/,
         /:#{TRAILING_QUAD}{1,7}/,
         /#{LEADING_QUAD}{1,6}#{TRAILING_QUAD}{1,1}/,

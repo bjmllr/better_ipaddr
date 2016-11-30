@@ -48,6 +48,7 @@ describe BetterIpaddr do
     assert_equal IPAddr::V4["0.0.0.1"], IPAddr(1)
 
     assert_equal IPAddr::V6["::1"], IPAddr("::1")
+    assert_equal IPAddr::V6["::"], IPAddr("::")
     assert_equal IPAddr::V6["::1000:0:0"], IPAddr(0x1000_0000_0000)
 
     assert_nil IPAddr(nil)
