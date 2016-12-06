@@ -5,3 +5,9 @@ module Kernel
     IPAddr::Base.from(object)
   end
 end
+
+class IPAddr
+  def self.Host(object)
+    Base.host_from(object)
+  end
+end

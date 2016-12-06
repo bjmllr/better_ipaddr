@@ -196,4 +196,11 @@ describe BetterIpaddr do
     assert_nil IPAddr::V4["1.0.1.0/24"]
                 .summarize_with(IPAddr::V4["1.0.2.0/24"])
   end
+
+  it "converts to specialized host classes" do
+    assert_equal IPAddr::V6::Host, IPAddr::Base.host_from('::1').class
+    assert_equal IPAddr::V6::Host, IPAddr::Base.host_from('::1/48').class
+    assert_equal 1, IPAddr::Base.host_from('::1/48').size
+    assert_equal 128, IPAddr::Base.host_from('::1/48').prefix_length
+  end
 end

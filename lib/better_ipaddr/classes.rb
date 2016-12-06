@@ -1,5 +1,6 @@
 require "better_ipaddr/constants"
 require "better_ipaddr/methods"
+require "better_ipaddr/host_methods"
 
 class IPAddr
   class Base < IPAddr
@@ -50,6 +51,21 @@ class IPAddr
         V4[address]
       when Regex::IPV6, 0..V6::MAX_INT
         V6[address]
+      end
+    end
+
+    # Create an IPAddr host subclass from the given object, guessing the type of
+    # address given based on its type and content.
+    #
+    # Uses .from internally, so the same concerns apply, though the returned
+    # object is guaranteed to be of a Host class or nil.
+
+    def self.host_from(address)
+      ip = from(address)
+      if ip.ipv4?
+        V4::Host[ip]
+      elsif ip.ipv6?
+        V6::Host[ip]
       end
     end
 
@@ -193,6 +209,8 @@ class IPAddr
       const_set(:PREFIX_LENGTH_TO_NETMASK,
                 PREFIX_LENGTH_TO_NETMASK.fetch(self::FAMILY))
       const_set(:MAX_INT, 2**self::BIT_LENGTH - 1)
+      const_set(:HOST_NETMASK,
+                self::PREFIX_LENGTH_TO_NETMASK.fetch(self::BIT_LENGTH))
     end
 
     def address_family_bit_length
@@ -212,12 +230,20 @@ class IPAddr
     specialize_constants Family::IPV4
 
     REGEX = Regex::IPV4
+
+    class Host < V4
+      include BetterIpaddr::HostMethods
+    end
   end
 
   class V6 < Base
     specialize_constants Family::IPV6
 
     REGEX = Regex::IPV6
+
+    class Host < V6
+      include BetterIpaddr::HostMethods
+    end
   end
 
   class MAC < Base
