@@ -45,6 +45,13 @@ module BetterIpaddr
   module InstanceMethods
     include Constants
 
+    def self.included(base)
+      return unless base <= IPAddr
+      base.class_eval do
+        define_method :stdlib_to_s, IPAddr.instance_method(:to_s)
+      end
+    end
+
     # Return the magic number representing the address family.
     # @return [Integer]
     attr_reader :family
@@ -149,17 +156,28 @@ module BetterIpaddr
     #
     # @return [String]
 
-    def base
-      _to_string(@addr)
+    def base(full: false)
+      if full
+        to_string
+      else
+        stdlib_to_s
+      end
+    end
+
+    def better_to_s(cidr: false, full: false)
+      if cidr
+        "#{base(full: full)}/#{prefix_length}"
+      else
+        base(full: full)
+      end
     end
 
     # Return a string containing the CIDR representation of the address.
     #
     # @return [String]
 
-    def cidr
-      return _to_string(@addr) unless ipv4? || ipv6?
-      "#{_to_string(@addr)}/#{prefixlen}"
+    def cidr(cidr: nil, full: false)
+      better_to_s(cidr: true, full: full)
     end
 
     # Test whether or not this address completely encloses the other address.

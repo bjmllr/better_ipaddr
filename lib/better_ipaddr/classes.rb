@@ -224,6 +224,10 @@ class IPAddr
     def prefix_length
       self.class::NETMASK_TO_PREFIX_LENGTH[mask_addr]
     end
+
+    def to_s(cidr: false, full: false)
+      better_to_s(cidr: cidr, full: full)
+    end
   end
 
   class V4 < Base

@@ -203,4 +203,26 @@ describe BetterIpaddr do
     assert_equal 1, IPAddr::Base.host_from('::1/48').size
     assert_equal 128, IPAddr::Base.host_from('::1/48').prefix_length
   end
+
+  it "produces compressed and uncompressed cidr and base strings" do
+    addr = IPAddr('1::/64')
+
+    assert_equal '1::', addr.better_to_s(cidr: false, full: false)
+    assert_equal "0001:0000:0000:0000:0000:0000:0000:0000",
+                 addr.better_to_s(cidr: false, full: true)
+    assert_equal '1::/64', addr.better_to_s(cidr: true, full: false)
+    assert_equal "0001:0000:0000:0000:0000:0000:0000:0000/64",
+                 addr.better_to_s(cidr: true, full: true)
+
+    assert_equal '1::', addr.to_s(cidr: false, full: false)
+    assert_equal "0001:0000:0000:0000:0000:0000:0000:0000",
+                 addr.to_s(cidr: false, full: true)
+    assert_equal '1::/64', addr.to_s(cidr: true, full: false)
+    assert_equal "0001:0000:0000:0000:0000:0000:0000:0000/64",
+                 addr.to_s(cidr: true, full: true)
+
+    # honor stdlib defaults
+    assert_equal IPAddr.new('1::/64').to_s, addr.better_to_s
+    assert_equal IPAddr.new('1::/64').to_s, addr.to_s
+  end
 end
