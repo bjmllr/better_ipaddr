@@ -2,47 +2,6 @@ require "ipaddr"
 require "better_ipaddr/constants"
 
 module BetterIpaddr
-  # Class methods mixed in to IPAddr::Base and its descendants
-  module ClassMethods
-    include Constants
-
-    # @overload [](address, family)
-    #   @param address [Integer] the integer representation of the address
-    #   @param family [Symbol] a symbol named for the address's
-    #     address family, one of +:ipv4+, +:ipv6+, or +:mac+.
-    #   @return [IPAddr]
-    #   Wrapper for IPAddr.new that accepts a symbolic family name and
-    #   returns a specialized IPAddr subclass.
-    #
-    # @overload [](address, family)
-    #   @param address [Integer] the integer representation of the address
-    #   @param family [Integer] the magic number representing the address's
-    #     address family.
-    #   @return [IPAddr]
-    #   Wrapper for IPAddr.new that accepts a symbolic family name and
-    #   returns a specialized IPAddr subclass.
-    #
-    # @overload [](address)
-    #   @param address [String] the string representation of the address
-    #   @return [IPAddr]
-    #   Wrapper for IPAddr.new that accepts the string representation
-    #   of an address returns a specialized IPAddr subclass.
-
-    def [](address, family = nil)
-      instance = case family
-                 when Symbol
-                   self[address, SYMBOL_TO_FAMILY.fetch(family)]
-                 when IPAddr
-                   address
-                 when nil
-                   new(address)
-                 else
-                   new(address, family)
-                 end
-      IPAddr::Base.specialize(instance)
-    end
-  end
-
   # Methods included in IPAddr::Base and its descendants
   module InstanceMethods
     include Constants

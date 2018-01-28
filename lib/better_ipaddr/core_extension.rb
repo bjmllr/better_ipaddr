@@ -4,7 +4,6 @@ require "better_ipaddr/classes"
 
 class IPAddr
   include BetterIpaddr::Constants
-  extend BetterIpaddr::ClassMethods
   prepend BetterIpaddr::InstanceMethods
   include Comparable
   include Enumerable
