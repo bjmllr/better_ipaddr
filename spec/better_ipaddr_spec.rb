@@ -79,11 +79,21 @@ describe BetterIpaddr do
   it "calculates ipv4 offsets" do
     assert_equal IPAddr::V4["1.0.0.1"] + 1, IPAddr::V4["1.0.0.2"]
     assert_equal IPAddr::V4["1.0.0.1"] - 1, IPAddr::V4["1.0.0.0"]
+    assert_equal IPAddr::V4["1.0.0.6"] + 3, IPAddr::V4["1.0.0.9"]
+    assert_equal IPAddr::V4["1.0.0.6"] - 3, IPAddr::V4["1.0.0.3"]
   end
 
-  it "calculates ipv4 network sizes" do
+  it "calculates ipv6 offsets" do
+    assert_equal IPAddr::V6["1::1/128"] + 1, IPAddr::V6["1::2/128"]
+    assert_equal IPAddr::V6["1::1/128"] - 1, IPAddr::V6["1::0/128"]
+    assert_instance_of IPAddr::V6, IPAddr::V6["1::1/128"] + 1
+    assert_instance_of IPAddr::V6, IPAddr::V6["1::1/128"] - 1
+  end
+
+  it "calculates network sizes" do
     assert_equal 1, IPAddr::V4["1.0.0.1"].size
     assert_equal 256, IPAddr::V4["1.0.0.0/24"].size
+    assert_equal 1, IPAddr::V6["::1/128"].size
   end
 
   it "converts ipv4 networks to ranges" do
@@ -93,6 +103,10 @@ describe BetterIpaddr do
   end
 
   it "enumerates host addresses within an ipv4 range" do
+    host = IPAddr::V4["0.0.0.1"]
+    assert_equal [host], host.each.to_a
+    assert_equal host, (host.each {})
+
     net = IPAddr::V4["1.0.0.0/30"]
     assert_equal net.to_a, net.each.to_a
     assert_equal [IPAddr::V4["1.0.0.0"],
@@ -100,6 +114,12 @@ describe BetterIpaddr do
                   IPAddr::V4["1.0.0.2"],
                   IPAddr::V4["1.0.0.3"]],
                  net.to_a
+  end
+
+  it "returns itself for a zero-offset in a host address" do
+    host = IPAddr::V4[1]
+    assert_equal host.object_id, host[0].object_id
+    refute_equal host.object_id, host[1].object_id
   end
 
   it "calculates ipv4 broadcast addresses" do
@@ -114,6 +134,8 @@ describe BetterIpaddr do
 
   it "calculates ipv4 wildcard mask strings" do
     assert_equal IPAddr::V4["1.0.0.0/24"].wildcard, "0.0.0.255"
+    assert_equal IPAddr::V6["1::/120"].wildcard,
+                 IPAddr::V6["::FF"].base(full: true)
   end
 
   it "calculates whether an ipv4 network covers another" do
@@ -139,6 +161,12 @@ describe BetterIpaddr do
                     .map { |a| IPAddr::V4[a].to_i }
 
     assert_equal ipv4_netmasks, IPAddr::V4::PREFIX_LENGTH_TO_NETMASK
+  end
+
+  it "compares addresses" do
+    assert IPAddr::V4["1.1.1.1"] < IPAddr::V6["::"]
+    assert IPAddr::V4[1] == 1
+    assert_raises(ArgumentError) { IPAddr::V4[1] <=> 'cow' }
   end
 
   it "distingushes ipv4 networks from hosts based on prefix length" do
@@ -179,6 +207,11 @@ describe BetterIpaddr do
 
   it "calculates containing networks" do
     assert_equal(IPAddr::V4["1.0.0.0/25"].grow(1), IPAddr::V4["1.0.0.0/24"])
+    assert_equal(IPAddr::V4["1.0.0.0/25"].grow(2), IPAddr::V4["1.0.0.0/23"])
+
+    assert_equal IPAddr::V4["1.0.0.0/25"].shrink(1), IPAddr::V4["1.0.0.0/26"]
+    assert_equal IPAddr::V4["1.0.0.0/24"].shrink(1), IPAddr::V4["1.0.0.0/25"]
+    assert_equal IPAddr::V4["1.0.0.0/24"].shrink(2), IPAddr::V4["1.0.0.0/26"]
   end
 
   it "identifies network pairs which can be summarized" do
@@ -192,6 +225,10 @@ describe BetterIpaddr do
     assert_equal IPAddr::V4["1.0.0.0/24"],
                  IPAddr::V4["1.0.0.0/24"]
       .summarize_with(IPAddr::V4["1.0.0.0/25"])
+
+    assert_equal IPAddr::V4["1.0.0.0/24"],
+                 IPAddr::V4["1.0.0.0/25"]
+      .summarize_with(IPAddr::V4["1.0.0.0/24"])
 
     assert_nil IPAddr::V4["1.0.1.0/24"]
       .summarize_with(IPAddr::V4["1.0.2.0/24"])
@@ -224,5 +261,30 @@ describe BetterIpaddr do
     # honor stdlib defaults
     assert_equal IPAddr.new('1::/64').to_s, addr.better_to_s
     assert_equal IPAddr.new('1::/64').to_s, addr.to_s
+  end
+
+  it "exposes its family" do
+    assert_equal 2, IPAddr::V4['1.2.3.0/24'].family
+    assert_equal 10, IPAddr::V6['1::1/64'].family
+  end
+
+  it "exposes the bit length of its family" do
+    ipaddr = IPAddr.new('0.0.0.1')
+    ipaddr.extend(BetterIpaddr::InstanceMethods)
+    assert_equal 32, ipaddr.address_family_bit_length
+
+    ipaddr = IPAddr.new('::')
+    ipaddr.extend(BetterIpaddr::InstanceMethods)
+    assert_equal 128, ipaddr.address_family_bit_length
+
+    assert_equal 32, IPAddr::V4[1].address_family_bit_length
+    assert_equal 128, IPAddr::V6[1].address_family_bit_length
+  end
+
+  it "guesses whether it is a host address or not" do
+    assert IPAddr::V4[1].host?
+    refute IPAddr::V4['1.0.0.0/24'].host?
+    assert IPAddr::V6[1].host?
+    refute IPAddr::V6['1::/64'].host?
   end
 end
