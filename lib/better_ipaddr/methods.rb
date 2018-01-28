@@ -217,6 +217,7 @@ module BetterIpaddr
       NETMASK_TO_PREFIX_LENGTH[family][mask_addr]
     end
 
+    alias_method :prefix, :prefix_length unless 1.respond_to?(:positive?)
     alias_method :prefixlen, :prefix_length
 
     # Return a new address with the prefix length increased by the
