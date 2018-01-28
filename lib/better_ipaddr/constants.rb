@@ -1,6 +1,7 @@
 require "socket"
 
 module BetterIpaddr
+  # Namespace for constants used by BetterIpaddr
   module Constants
     # Integer codes representing supported address clases.
     # Reuse values from Socket namespace where possible.
@@ -28,7 +29,7 @@ module BetterIpaddr
         /[0-9]/
       )
 
-      IPV4 = /\A#{OCTET}#{TRAILING_OCTET}{3}(?:\/#{IPV4_PL})?\z/
+      IPV4 = %r{\A#{OCTET}#{TRAILING_OCTET}{3}(?:\/#{IPV4_PL})?\z}
 
       # IPv6 regex adapted from http://stackoverflow.com/a/17871737
       QUAD = /[0-9a-zA-Z]{1,4}/
@@ -64,7 +65,7 @@ module BetterIpaddr
         /#{LEADING_QUAD}{1,4}:#{IPV4}/
       )
 
-      IPV6 = /\A#{IPV6_ADDRESS}(?:\/#{IPV6_PL})?\z/
+      IPV6 = %r{\A#{IPV6_ADDRESS}(?:\/#{IPV6_PL})?\z}
     end
 
     # Map well known address family names to constants.
@@ -74,7 +75,7 @@ module BetterIpaddr
       eui48: Family::EUI48,
       eui64: Family::EUI64,
       mac: Family::EUI48
-    }
+    }.freeze
 
     # Map each address family to the size of its address space, in bits.
     FAMILY_TO_BIT_LENGTH = {
@@ -82,7 +83,7 @@ module BetterIpaddr
       Family::IPV6 => 128,
       Family::EUI48 => 48,
       Family::EUI64 => 64
-    }
+    }.freeze
 
     # Map all possible prefix lengths to the corresponding netmasks.
     PREFIX_LENGTH_TO_NETMASK = {}
@@ -93,6 +94,7 @@ module BetterIpaddr
       end
       PREFIX_LENGTH_TO_NETMASK[family] = netmasks
     end
+    PREFIX_LENGTH_TO_NETMASK.freeze
 
     # Map all possible netmasks to the corresponding prefix lengths.
     NETMASK_TO_PREFIX_LENGTH = {}
@@ -100,5 +102,6 @@ module BetterIpaddr
       NETMASK_TO_PREFIX_LENGTH[family] =
         Hash[hash.map.with_index { |e, i| [e, i] }]
     end
+    NETMASK_TO_PREFIX_LENGTH.freeze
   end
 end

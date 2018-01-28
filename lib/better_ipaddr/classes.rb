@@ -3,6 +3,7 @@ require "better_ipaddr/methods"
 require "better_ipaddr/host_methods"
 
 class IPAddr
+  # An intermediate superclass for all BetterIpaddr classes
   class Base < IPAddr
     include BetterIpaddr::Constants
     include BetterIpaddr::InstanceMethods
@@ -230,26 +231,31 @@ class IPAddr
     end
   end
 
+  # An IPv4 address, 32 bits
   class V4 < Base
     specialize_constants Family::IPV4
 
     REGEX = Regex::IPV4
 
+    # An IPv4 host address, 32 bits
     class Host < V4
       include BetterIpaddr::HostMethods
     end
   end
 
+  # An IPv6 address, 128 bits
   class V6 < Base
     specialize_constants Family::IPV6
 
     REGEX = Regex::IPV6
 
+    # An IPv6 host address, 128 bits
     class Host < V6
       include BetterIpaddr::HostMethods
     end
   end
 
+  # A MAC address, 48 bits
   class MAC < Base
     specialize_constants Family::EUI48
   end

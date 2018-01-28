@@ -2,6 +2,7 @@ require "ipaddr"
 require "better_ipaddr/constants"
 
 module BetterIpaddr
+  # Class methods mixed in to IPAddr::Base and its descendants
   module ClassMethods
     include Constants
 
@@ -42,6 +43,7 @@ module BetterIpaddr
     end
   end
 
+  # Methods included in IPAddr::Base and its descendants
   module InstanceMethods
     include Constants
 
@@ -85,7 +87,7 @@ module BetterIpaddr
     # @return [IPAddr]
 
     def -(offset)
-      self + (-offset)
+      self + -offset
     end
 
     # @overload <=>(other)
@@ -105,7 +107,7 @@ module BetterIpaddr
         family_difference = family <=> other.family
         return family_difference unless family_difference == 0
       elsif !other.is_a?(Integer)
-        fail ArgumentError, "Can't compare #{self.class} with #{other.class}"
+        raise ArgumentError, "Can't compare #{self.class} with #{other.class}"
       end
 
       address_difference = to_i <=> other.to_i
@@ -137,7 +139,7 @@ module BetterIpaddr
     # @return [IPAddr] the address at the given index
 
     def [](offset)
-      return self if offset.zero? && host?
+      return self if offset == 0 && host?
       offset2 = offset >= 0 ? offset : size + offset
       self.class[to_i + offset2, family: family]
     end

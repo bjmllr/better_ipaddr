@@ -2,6 +2,7 @@ require "ipaddr"
 require "better_ipaddr/classes"
 
 module BetterIpaddr
+  # Address space utilities
   class Space
     include Enumerable
 
@@ -14,8 +15,8 @@ module BetterIpaddr
       @space = space
       outlier = @networks.find { |net| !@space.cover?(net) }
       return unless outlier
-      fail ArgumentError, "Address space #{@space.inspect} does not cover "\
-                          "network #{outlier.inspect}"
+      raise ArgumentError, "Address space #{@space.inspect} does not cover "\
+                           "network #{outlier.inspect}"
     end
 
     def +(other)
@@ -96,7 +97,7 @@ module BetterIpaddr
     def infer_address_family(*networks)
       example = networks.find { |net| net.respond_to?(:family) }
       return example.family if example
-      fail "Unable to infer address family"
+      raise "Unable to infer address family"
     end
 
     def export(new_networks, space: nil)

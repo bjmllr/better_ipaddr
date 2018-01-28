@@ -1,0 +1,56 @@
+Layout/EmptyLinesAroundArguments:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/better_ipaddr/classes.rb'
+    - 'lib/better_ipaddr/space.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/better_ipaddr/methods.rb'
+
+Naming/BinaryOperatorParameterName:
+  Enabled: false
+
+Naming/MethodName:
+  Exclude:
+    - 'lib/better_ipaddr/kernel_method.rb'
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/CommentedKeyword:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - 'lib/better_ipaddr/core_extension.rb'
+    - 'lib/better_ipaddr/kernel_method.rb'
+    - 'spec/**/*'
+
+Style/MutableConstant:
+  Exclude:
+    - 'lib/better_ipaddr/constants.rb'
+
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/YodaCondition:
+  Enabled: false

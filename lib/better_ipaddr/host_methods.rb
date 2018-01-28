@@ -1,4 +1,5 @@
 module BetterIpaddr
+  # Methods included in IPAddr::IPV4::Host and IPAddr::IPV6::Host
   module HostMethods
     def initialize(*)
       super

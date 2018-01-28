@@ -184,17 +184,17 @@ describe BetterIpaddr do
   it "identifies network pairs which can be summarized" do
     assert_equal IPAddr::V4["1.0.0.0/23"],
                  IPAddr::V4["1.0.0.0/24"]
-                   .summarize_with(IPAddr::V4["1.0.1.0/24"])
+      .summarize_with(IPAddr::V4["1.0.1.0/24"])
 
     assert_nil IPAddr::V4["1.0.2.0/24"]
-                .summarize_with(IPAddr::V4["1.0.0.0/24"])
+      .summarize_with(IPAddr::V4["1.0.0.0/24"])
 
     assert_equal IPAddr::V4["1.0.0.0/24"],
                  IPAddr::V4["1.0.0.0/24"]
-                   .summarize_with(IPAddr::V4["1.0.0.0/25"])
+      .summarize_with(IPAddr::V4["1.0.0.0/25"])
 
     assert_nil IPAddr::V4["1.0.1.0/24"]
-                .summarize_with(IPAddr::V4["1.0.2.0/24"])
+      .summarize_with(IPAddr::V4["1.0.2.0/24"])
   end
 
   it "converts to specialized host classes" do
