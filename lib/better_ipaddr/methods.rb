@@ -66,7 +66,7 @@ module BetterIpaddr
         family_difference = family <=> other.family
         return family_difference unless family_difference == 0
       elsif !other.is_a?(Integer)
-        raise ArgumentError, "Can't compare #{self.class} with #{other.class}"
+        return nil
       end
 
       address_difference = to_i <=> other.to_i

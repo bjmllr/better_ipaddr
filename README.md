@@ -77,6 +77,16 @@ class_c = addr << 8 # => IPAddr::V4["1.0.0.0/24"]
 IPAddr.new("1.0.0.0/24").summarize_with(IPAddr["1.0.1.0/24"]) # => IPAddr::V4["1.0.0.0/23"]
 ```
 
+This approach introduces at least one incompatibility: addresses that differ
+only in their netmask are considered equal in ipaddr, but not in better_ipaddr:
+
+```ruby
+require 'ipaddr'
+IPAddr.new('1.0.0.0/32') == IPAddr.new('1.0.0.0/8') # => true
+require 'better_ipaddr/core_extension'
+IPAddr.new('1.0.0.0/32') == IPAddr.new('1.0.0.0/8') # => false
+```
+
 The recommended way is to `require "better_ipaddr"` and use
 the `IPAddr` subclasses explicitly.
 

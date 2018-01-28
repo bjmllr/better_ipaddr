@@ -7,4 +7,9 @@ Rake::TestTask.new(:spec) do |t|
   t.test_files = FileList["spec/**/*_spec.rb"]
 end
 
-task default: :spec
+Rake::TestTask.new(:spec_ipaddr) do |t|
+  t.libs << "lib"
+  t.test_files = FileList["spec/extra/**/test_ipaddr.rb"]
+end
+
+task default: %i[spec spec_ipaddr]

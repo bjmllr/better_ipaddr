@@ -166,7 +166,7 @@ describe BetterIpaddr do
   it "compares addresses" do
     assert IPAddr::V4["1.1.1.1"] < IPAddr::V6["::"]
     assert IPAddr::V4[1] == 1
-    assert_raises(ArgumentError) { IPAddr::V4[1] <=> 'cow' }
+    assert_nil IPAddr::V4[1] <=> 'cow'
   end
 
   it "distingushes ipv4 networks from hosts based on prefix length" do
