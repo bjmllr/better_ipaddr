@@ -44,7 +44,7 @@ class IPAddr
     #
     # @param address [Integer, IPAddr, String]
     # @return [IPAddr, Nil]
-    def self.from(address)
+    def self.from(address, exception: false)
       case address
       when IPAddr
         specialize address
@@ -52,7 +52,11 @@ class IPAddr
         V4[address]
       when Regex::IPV6, 0..V6::MAX_INT
         V6[address]
-      end
+      end || (
+        if exception
+          raise TypeError, "can't convert #{address.inspect} to #{self}"
+        end
+      )
     end
 
     # Create an IPAddr host subclass from the given object, guessing the type of
@@ -61,11 +65,11 @@ class IPAddr
     # Uses .from internally, so the same concerns apply, though the returned
     # object is guaranteed to be of a Host class or nil.
 
-    def self.host_from(address)
-      ip = from(address)
-      if ip.ipv4?
+    def self.host_from(address, exception: false)
+      ip = from(address, exception: exception)
+      if ip && ip.ipv4?
         V4::Host[ip]
-      elsif ip.ipv6?
+      elsif ip && ip.ipv6?
         V6::Host[ip]
       end
     end

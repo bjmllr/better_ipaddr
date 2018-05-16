@@ -1,13 +1,13 @@
 require "better_ipaddr/classes"
 
 module Kernel
-  def IPAddr(object)
-    IPAddr::Base.from(object)
+  def IPAddr(object, exception: false)
+    IPAddr::Base.from(object, exception: exception)
   end
 end
 
 class IPAddr
-  def self.Host(object)
-    Base.host_from(object)
+  def self.Host(object, exception: false)
+    Base.host_from(object, exception: exception)
   end
 end

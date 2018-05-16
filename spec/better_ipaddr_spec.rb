@@ -52,9 +52,24 @@ describe BetterIpaddr do
     assert_equal IPAddr::V6["::1000:0:0"], IPAddr(0x1000_0000_0000)
 
     assert_nil IPAddr(nil)
+    assert_nil IPAddr(nil, exception: false)
     assert_nil IPAddr("1.0.0")
     assert_nil IPAddr("1.0.0.256")
     assert_nil IPAddr(-1)
+
+    assert_raises TypeError do
+      IPAddr(nil, exception: true)
+    end
+
+    assert_equal IPAddr::V4::Host["1.0.0.0"], IPAddr::Host("1.0.0.0")
+    assert_equal IPAddr::V6::Host["::1"], IPAddr::Host("::1")
+
+    assert_nil IPAddr::Host(nil)
+    assert_nil IPAddr::Host(nil, exception: false)
+
+    assert_raises TypeError do
+      IPAddr::Host(nil, exception: true)
+    end
   end
 
   it "round trips ipv4 with strings" do
