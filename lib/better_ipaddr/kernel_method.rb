@@ -1,8 +1,8 @@
 require "better_ipaddr/classes"
 
 module Kernel
-  def IPAddr(object, exception: false)
-    IPAddr::Base.from(object, exception: exception)
+  def IPAddr(object, exception: false, classful: false)
+    IPAddr::Base.from(object, exception: exception, classful: classful)
   end
 end
 

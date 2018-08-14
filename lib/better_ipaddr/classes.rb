@@ -18,8 +18,9 @@ class IPAddr
     # @param address [Integer, IPAddr, String]
     # @param mask [Integer, IPAddr, String, Nil]
     # @param family [Integer]
+    # @param classful [Boolean] see Base.from_string
     # @return [IPAddr, Nil]
-    def self.[](address, mask = nil, family: self::FAMILY)
+    def self.[](address, mask = nil, family: self::FAMILY, classful: false)
       prefix_length = mask && object_to_prefix_length(mask, family)
 
       case address
@@ -28,7 +29,7 @@ class IPAddr
       when IPAddr
         from_ipaddr(address, prefix_length, family: family)
       when String
-        from_string(address, prefix_length, family: family)
+        from_string(address, prefix_length, family: family, classful: classful)
       end
     end
 
@@ -43,13 +44,14 @@ class IPAddr
     # content.
     #
     # @param address [Integer, IPAddr, String]
+    # @param classful [Boolean] see Base.from_string
     # @return [IPAddr, Nil]
-    def self.from(address, exception: false)
+    def self.from(address, exception: false, classful: false)
       case address
       when IPAddr
         specialize address
       when Regex::IPV4, 0..V4::MAX_INT
-        V4[address]
+        V4[address, classful: classful]
       when Regex::IPV6, 0..V6::MAX_INT
         V6[address]
       end || (
@@ -100,12 +102,26 @@ class IPAddr
     # @param address [String]
     # @param mask [Integer, String] a netmask or prefix length
     # @param family [Integer, Nil]
+    # @param classful [Boolean] controls the conversion of IPv4 addresses
+    #   without a prefix length in CIDR notation. When false, these are assumed
+    #   to be host networks (/32). When true, these are assumed to be classful
+    #   (rfc791) networks, with an implicit prefix length. Has no effect on IPv6
+    #   addresses.
     # @return [IPAddr]
-    def self.from_string(address, mask = nil, family: self::FAMILY)
+    def self.from_string(
+      address,
+      mask = nil,
+      family: self::FAMILY,
+      classful: false
+    )
       if mask
         new(address, family).mask(mask)
-      else
+      elsif !classful || address.include?('/')
         new(address, family)
+      else
+        ipaddr = new(address, family)
+        return ipaddr unless ipaddr.ipv4?
+        ipaddr.classful || ipaddr
       end
     end
 
@@ -240,6 +256,40 @@ class IPAddr
     specialize_constants Family::IPV4
 
     REGEX = Regex::IPV4
+
+    NETWORK_CLASSES = {
+      new('0.0.0.0/1')   =>  8, # A
+      new('128.0.0.0/2') => 16, # B
+      new('192.0.0.0/3') => 24  # C
+    }.freeze
+
+    # If the address falls in one of the address classes defined in rfc791,
+    # return a new IPAddr with the appropriate prefix length, otherwise return
+    # nil.
+    #
+    # * Class A: networks of 16,777,216 addresses each,
+    #   from 0.0.0.0/8 to 127.0.0.0/8
+    # * Class B: networks of 65,537 addresses each,
+    #   from 128.0.0.0/16 to 191.255.0.0/16
+    # * Class C: networks of 256 addresses each,
+    #   from 192.0.0.0/24 to 223.255.255.0/24
+    #
+    # @return [IPAddr::V4, nil]
+    def classful
+      prefix_length = classful_prefix_length || return
+      mask(prefix_length)
+    end
+
+    # If the address falls in one of the address classes defined in rfc791,
+    # return the corresponding prefix length, otherwise return nil.
+    #
+    # @return [Integer, nil]
+    def classful_prefix_length
+      key = NETWORK_CLASSES.keys.find do |block|
+        block.to_range(&:to_i).cover?(to_i)
+      end
+      NETWORK_CLASSES[key]
+    end
 
     # An IPv4 host address, 32 bits
     class Host < V4

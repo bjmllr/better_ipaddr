@@ -302,4 +302,19 @@ describe BetterIpaddr do
     assert IPAddr::V6[1].host?
     refute IPAddr::V6['1::/64'].host?
   end
+
+  it "infers ipv4 prefix length based on rfc791 classes" do
+    assert_equal IPAddr::V4['0.0.0.0/8'],
+                 IPAddr('0.0.0.0', classful: true)
+    assert_equal IPAddr::V4['127.0.0.0/8'],
+                 IPAddr::V4['127.0.0.0', classful: true]
+    assert_equal IPAddr::V4['128.0.0.0/16'],
+                 IPAddr('128.0.0.0', classful: true)
+    assert_equal IPAddr::V4['191.255.0.0/16'],
+                 IPAddr::V4['191.255.0.0/16', classful: true]
+    assert_equal IPAddr::V4['192.0.0.0/24'],
+                 IPAddr('192.0.0.0', classful: true)
+    assert_equal IPAddr::V4['223.255.255.0/24'],
+                 IPAddr::V4['223.255.255.0', classful: true]
+  end
 end
