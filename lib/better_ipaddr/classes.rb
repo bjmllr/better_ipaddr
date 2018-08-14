@@ -44,6 +44,9 @@ class IPAddr
     # content.
     #
     # @param address [Integer, IPAddr, String]
+    # @param exception [Boolean] If true, then when the given object can't be
+    #   converted to an IPAddr, a TypeError will be raise rather than returning
+    #   nil.
     # @param classful [Boolean] see Base.from_string
     # @return [IPAddr, Nil]
     def self.from(address, exception: false, classful: false)
@@ -66,6 +69,10 @@ class IPAddr
     #
     # Uses .from internally, so the same concerns apply, though the returned
     # object is guaranteed to be of a Host class or nil.
+    #
+    # @param address [Integer, IPAddr, String]
+    # @param exception [Boolean] See IPAddr::Base.from
+    # @return [IPAddr::Host, Nil]
 
     def self.host_from(address, exception: false)
       ip = from(address, exception: exception)
