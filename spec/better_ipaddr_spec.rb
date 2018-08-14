@@ -317,4 +317,28 @@ describe BetterIpaddr do
     assert_equal IPAddr::V4['223.255.255.0/24'],
                  IPAddr::V4['223.255.255.0', classful: true]
   end
+
+  it "inspects legibly" do
+    assert_equal IPAddr::V4['1.2.3.0/24'].inspect,
+                 "IPAddr::V4['1.2.3.0/24']"
+    assert_equal IPAddr::V4::Host['1.2.3.4'].inspect,
+                 "IPAddr::V4::Host['1.2.3.4']"
+    assert_equal IPAddr::V6['2::/64'].inspect,
+                 "IPAddr::V6['2::/64']"
+    assert_equal IPAddr::V6::Host['2::2'].inspect,
+                 "IPAddr::V6::Host['2::2']"
+  end
+
+  it "inspects copy-pastably" do
+    [
+      IPAddr::V4['1.2.3.0/24'],
+      IPAddr::V4::Host['1.2.3.4'],
+      IPAddr::V6['2::/64'],
+      IPAddr::V6::Host['2::2']
+    ].each do |addr|
+      # rubocop: disable Security/Eval
+      assert_equal addr, eval(addr.inspect)
+      # rubocop: enable Security/Eval
+    end
+  end
 end

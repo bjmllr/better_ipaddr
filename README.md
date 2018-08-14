@@ -10,6 +10,8 @@ require "better_ipaddr"
 addr = IPAddr::V4[some_source] # shortcut for .new, because your test suite
                                #   contains a zillion IP addresses and you're
                                #   tired of typing Socket::AF_INET
+addr.inspect                   #
+#=> "IPAddr::V4['1.2.3.0/24']" # inspect emits readable, copy-pastable ruby code
 addr.host?                     # is it a host address?
 addr.network?                  # or a network address?
 addr.cidr                      # what is the CIDR representation?
