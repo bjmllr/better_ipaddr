@@ -33,6 +33,8 @@ class IPAddr
       end
     end
 
+    # rubocop: disable CyclomaticComplexity
+
     # Create an IPAddr from the given object, guessing the type of address given
     # based on its type and content.
     #
@@ -50,6 +52,10 @@ class IPAddr
     # @param classful [Boolean] see Base.from_string
     # @return [IPAddr, Nil]
     def self.from(address, exception: false, classful: false)
+      if class_converter?(address)
+        return class_convert(address, classful: classful, exception: exception)
+      end
+
       case address
       when IPAddr
         specialize address
@@ -59,7 +65,62 @@ class IPAddr
         V6[address]
       end || (
         if exception
-          raise TypeError, "can't convert #{address.inspect} to #{self}"
+          (raise TypeError, "can't convert #{address.inspect} to #{self}")
+        end
+      )
+    end
+
+    # rubocop: enable CyclomaticComplexity
+
+    # A Hash of classes and class names which can be converted to IPAddr::Base
+    # subclasses, but which are not necessarily loaded at the same time as this
+    # file.
+    #
+    # Conversion callables for custom classes can be registered here, e.g., with
+    # custom class Foo:
+    #
+    #   IPAddr::Base.class_converters[Foo] = proc { |foo, _| foo.to_ipaddr }
+    #
+    # The arguments passed to the callable will be the same as the parameters of
+    # Kernel#IPAddr.
+    #
+    # @return [Hash{String, Class => Proc, Method}]
+    def self.class_converters
+      @class_converters ||= {
+        'Resolv::IPv4' => V4.method(:from_string_representable),
+        'Resolv::IPv6' => V6.method(:from_string_representable)
+      }
+    end
+
+    # Return the class_converter for the given object, if one exists.
+    #
+    # Checks by both class identity and class name so that every class with a
+    # converter doesn't need to be loaded for this file to load.
+    #
+    # @return [Proc, Method, Nil]
+    def self.class_converter(address)
+      class_converters[address.class] ||= class_converters[address.class.name]
+      class_converters[address.class]
+    end
+
+    def self.class_converter?(address)
+      class_converters.key?(address.class) ||
+        class_converters.key?(address.class.name)
+    end
+
+    # Convert the given object using its class_converter, if one exists.
+    #
+    # @return [IPAddr, Nil]
+    def self.class_convert(address, mask = nil, classful: nil, exception: false)
+      converter = class_converter(address)
+      converter && converter.call(
+        address,
+        mask,
+        classful: classful,
+        exception: exception
+      ) || (
+        if exception
+          (raise TypeError, "can't convert #{address.inspect} to #{self}")
         end
       )
     end
@@ -130,6 +191,29 @@ class IPAddr
         return ipaddr unless ipaddr.ipv4?
         ipaddr.classful || ipaddr
       end
+    end
+
+    # Create an IPAddr from an object that can be converted to a String via
+    # #to_s.
+    #
+    #
+    # @param address [#to_s]
+    # @param mask [Integer, String] a netmask or prefix length
+    # @param family [Integer, Nil]
+    # @param classful [Boolean] controls the conversion of IPv4 addresses
+    #   without a prefix length in CIDR notation. When false, these are assumed
+    #   to be host networks (/32). When true, these are assumed to be classful
+    #   (rfc791) networks, with an implicit prefix length. Has no effect on IPv6
+    #   addresses.
+    # @return [IPAddr]
+    def self.from_string_representable(
+      address,
+      mask = nil,
+      family: self::FAMILY,
+      classful: false,
+      exception: false
+    )
+      from_string(address.to_s, mask, family: family, classful: classful)
     end
 
     # Convert an object to a prefix length.
