@@ -1,4 +1,5 @@
 require "spec_helper"
+require "resolv"
 require "better_ipaddr"
 require "better_ipaddr/kernel_method"
 
@@ -46,10 +47,12 @@ describe BetterIpaddr do
   it "can convert various types of objects to IPAddr" do
     assert_equal IPAddr::V4["1.0.0.0"], IPAddr("1.0.0.0")
     assert_equal IPAddr::V4["0.0.0.1"], IPAddr(1)
+    assert_equal IPAddr::V4["1.0.0.0"], IPAddr(Resolv::IPv4.create("1.0.0.0"))
 
     assert_equal IPAddr::V6["::1"], IPAddr("::1")
     assert_equal IPAddr::V6["::"], IPAddr("::")
     assert_equal IPAddr::V6["::1000:0:0"], IPAddr(0x1000_0000_0000)
+    assert_equal IPAddr::V6["::1"], IPAddr(Resolv::IPv6.create("::1"))
 
     assert_nil IPAddr(nil)
     assert_nil IPAddr(nil, exception: false)
