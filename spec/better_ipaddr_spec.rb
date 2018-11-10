@@ -344,4 +344,20 @@ describe BetterIpaddr do
       # rubocop: enable Security/Eval
     end
   end
+
+  it 'hashes' do
+    ips = IPAddr::V6['fa00::0/124'].to_a
+
+    # this raises on some version of JRuby (https://github.com/jruby/jruby/issues/4460)
+    ips.map(&:hash)
+
+    struct = Struct.new(:ip)
+    structs = ips.map { |ip| struct.new(ip) }
+
+    # raises on JRuby, separate issue from above
+    structs.map(&:hash)
+
+    assert_equal structs.map(&:hash), structs.map(&:hash).uniq
+    assert_equal structs, structs.uniq(&:hash)
+  end
 end
