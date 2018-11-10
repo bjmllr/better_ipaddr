@@ -172,6 +172,12 @@ module BetterIpaddr
     # The first host address in the network.
     # @return [IPAddr]
 
+    def hash
+      # see https://github.com/jruby/jruby/issues/4460
+      # remove this override when specs still pass without it
+      [self.class, @addr, @mask_addr, @family].hash
+    end
+
     def first
       self[0]
     end
