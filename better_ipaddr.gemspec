@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "ipaddr", ">= 1.2.0"
-  spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "minitest", "~> 5.0", "< 5.11"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rubocop", "~> 0.54" if RUBY_VERSION > '2.1'
   spec.add_development_dependency "test-unit"
